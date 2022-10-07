@@ -1,7 +1,6 @@
 html,
 body {
-    /* background-image: linear-gradient(to bottom, rgb(0, 0, 0), rgb(180, 57, 0)); */
-    background: conic-gradient(from 0deg at 0% 0%, black, rgb(90, 90, 90));
+    background: conic-gradient(from 0deg at 0% 0%, rgb(5, 0, 2), rgb(0, 56, 73));
     color: rgb(220, 220, 220);
     text-align: left;
     width: 100%;
@@ -23,5 +22,5 @@ h2 {
 }
 
 code {
-    color: #17a2b8;
+    color: #ff9900;
 }
