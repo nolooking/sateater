@@ -1,0 +1,27 @@
+html,
+body {
+    /* background-image: linear-gradient(to bottom, rgb(0, 0, 0), rgb(180, 57, 0)); */
+    background: conic-gradient(from 0deg at 0% 0%, black, rgb(90, 90, 90));
+    color: rgb(220, 220, 220);
+    text-align: left;
+    width: 100%;
+}
+
+.vertical-center {
+    min-height: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+h2 {
+    font-weight: 600;
+    background-image: linear-gradient(to left, #17a2b8, #17a2b8);
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+code {
+    color: #17a2b8;
+}
