@@ -13,6 +13,10 @@ rand = "0.8.5"
 qrcode-generator = "4.1.6"
 clightningrpc = "0.2.0"
 
+# https://github.com/Kixunil/tonic_lnd/issues/17
+tonic_lnd = { git = "https://github.com/yzernik/tonic_openssl_lnd", rev = "8c7e3a029a33c4c5fbac061658026cac2d1b190e" }
+hex = "0.4.3"
+
 [dependencies.uuid]
 version = "1.1.2"
 features = [
