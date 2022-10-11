@@ -38,7 +38,7 @@ function click_pay() {
                     data.message;
             }
 
-            check_payment_interval = setcheck_payment_interval(function () {
+            check_payment_interval = setInterval(function () {
                 check_payment(data.payment_id);
             }, 3000);
         })
