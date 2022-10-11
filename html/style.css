@@ -13,14 +13,50 @@ body {
     align-items: center;
 }
 
-h2 {
-    font-weight: 600;
-    background-image: linear-gradient(to left, #17a2b8, #17a2b8);
+h1 {
+    font-weight: 1000;
+    font-size: 4em;
+    background-image: conic-gradient(from 0deg at 0% 0%, rgb(255, 174, 0), rgb(0, 255, 242));
     color: transparent;
     background-clip: text;
     -webkit-background-clip: text;
 }
 
+h2 {
+    font-weight: 600;
+    background-image: conic-gradient(from 0deg at 0% 0%, rgb(255, 174, 0), rgb(0, 255, 242));
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+h3 {
+    font-weight: 600;
+    background-image: conic-gradient(from 0deg at 0% 0%, rgb(255, 174, 0), rgb(0, 255, 242));
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+p {
+    font-size: 1.5em;
+    font-weight: 400;
+    background-image: conic-gradient(from 0deg at 0% 0%, rgb(175, 26, 26), rgba(208, 255, 0, 0.986));
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+a {
+    text-decoration-color: rgb(0, 255, 234);
+    color:#016cc4
+}
+
+li {
+    font-size: 1.5em;
+    font-weight: 400;
+}
+
 code {
-    color: #ff9900;
+    color: rgb(166, 219, 18);
 }
