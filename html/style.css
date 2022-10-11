@@ -1,6 +1,10 @@
 html,
 body {
-    background: conic-gradient(from 0deg at 0% 0%, rgb(5, 0, 2), rgb(0, 56, 73));
+    background: conic-gradient(
+        from 0deg at 0% 0%,
+        rgb(5, 0, 2),
+        rgb(0, 56, 73)
+    );
     color: rgb(220, 220, 220);
     text-align: left;
     width: 100%;
@@ -16,7 +20,11 @@ body {
 h1 {
     font-weight: 1000;
     font-size: 4em;
-    background-image: conic-gradient(from 0deg at 0% 0%, rgb(255, 174, 0), rgb(0, 255, 242));
+    background-image: conic-gradient(
+        from 0deg at 0% 0%,
+        rgb(255, 174, 0),
+        rgb(0, 255, 242)
+    );
     color: transparent;
     background-clip: text;
     -webkit-background-clip: text;
@@ -24,7 +32,11 @@ h1 {
 
 h2 {
     font-weight: 600;
-    background-image: conic-gradient(from 0deg at 0% 0%, rgb(255, 174, 0), rgb(0, 255, 242));
+    background-image: conic-gradient(
+        from 0deg at 0% 0%,
+        rgb(255, 174, 0),
+        rgb(0, 255, 242)
+    );
     color: transparent;
     background-clip: text;
     -webkit-background-clip: text;
@@ -32,7 +44,11 @@ h2 {
 
 h3 {
     font-weight: 600;
-    background-image: conic-gradient(from 0deg at 0% 0%, rgb(255, 174, 0), rgb(0, 255, 242));
+    background-image: conic-gradient(
+        from 0deg at 0% 0%,
+        rgb(255, 174, 0),
+        rgb(0, 255, 242)
+    );
     color: transparent;
     background-clip: text;
     -webkit-background-clip: text;
@@ -41,7 +57,11 @@ h3 {
 p {
     font-size: 1.5em;
     font-weight: 400;
-    background-image: conic-gradient(from 0deg at 0% 0%, rgb(175, 26, 26), rgba(208, 255, 0, 0.986));
+    background-image: conic-gradient(
+        from 0deg at 0% 0%,
+        rgb(175, 26, 26),
+        rgba(208, 255, 0, 0.986)
+    );
     color: transparent;
     background-clip: text;
     -webkit-background-clip: text;
@@ -49,7 +69,9 @@ p {
 
 a {
     text-decoration-color: rgb(0, 255, 234);
-    color:#016cc4
+    color: #01adc4;
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
+        DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New;
 }
 
 li {
