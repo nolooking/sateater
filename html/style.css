@@ -90,3 +90,10 @@ li {
 code {
     color: rgb(166, 219, 18);
 }
+
+
+hr {
+    border-color:  rgb(255, 238, 0);
+    border-width: 1px;
+
+}
