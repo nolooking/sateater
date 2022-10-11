@@ -1,3 +1,5 @@
 /target
 lightning-rpc
 html/qr_codes/*
+*.macaroon
+tls.cert

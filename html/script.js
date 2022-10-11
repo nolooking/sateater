@@ -11,7 +11,7 @@ function check_payment(payment_id) {
 
             if (data.payment_complete == true) {
                 clearInterval(check_payment_interval);
-                document.getElementById("payment_status").innerHTML = "Payment recieved!";
+                document.getElementById("payment_status").innerHTML = "Payment recieved! Thankyou!";
             }
         });
 }
