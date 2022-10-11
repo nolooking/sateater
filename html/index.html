@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Pay</title>
+        <title>Hackathon Team</title>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,45 +28,117 @@
         ></script>
 
         <link rel="stylesheet" href="style.css" />
-        <script src="script.js"></script>
     </head>
 
     <div class="row vertical-center cover-container fill vh-100 h-100 w-100">
         <div class="col-lg-5 mx-auto g-0 p-4 text-break">
-            <h2>Pay</h2>
-            <form onsubmit="return click_pay()">
-                <div class="input-group">
-                    <input
-                        type="text"
-                        style="text-align: right"
-                        class="form-control"
-                        id="amount"
-                        placeholder="Amount (sats)"
-                    />
-                    <div class="input-group-append">
-                        <button
-                            class="btn-info"
-                            type="submit"
-                            id="clickgo"
-                            value="Go"
-                        >
-                            Pay
-                        </button>
+            <img src="banner.gif">
+            <h3>
+                Assembled for the
+                <a
+                    href="https://makers.bolt.fun/tournaments/1/overview"
+                    target="_blank"
+                >
+                    Legends of Lightning
+                </a>
+                Hackathon.
+            </h3>
+            <div>
+                <nav class="navbar navbar-expand-sm">
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#navbarNav"
+                        aria-controls="navbarNav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    href="https://github.com/nolooking"
+                                    >Github</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/donate.html"
+                                    >Donate</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#"
+                                    >Contact</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#"
+                                    >Maker.fun</a
+                                >
+                            </li>
+                        </ul>
                     </div>
-                </div>
-            </form>
-            <p id="payment_response"></p>
-            <div id="payment_div" style="display: none">
-                <code id="address" style="word-break: break-word"></code>
+                </nav>
             </div>
             <br />
+            <h3>Members:</h3>
+            <p id="members"></p>
             <br />
-            <img
-            id="qr"
-            class="mx-auto d-block"
-            style="display: none; max-width: 300px"
-            />
-            <h3 id="payment_status"></h3>
+            <br />
+            <p>
+                <b> Making Lightning Channels Easier and More Private </b>
+                <br />
+                <code>
+                    > Building a lightning channel generator which uses
+                    collaborative bitcoin transactions called payjoins.
+                    <br />
+                    <br />
+                    > Queue up lightning channels, a new one opens whenever you
+                    recieve an onchain bitcoin payment.
+                </code>
+            </p>
+            <br />
+            <p>
+                <b> Building the E-Cash Economy </b>
+                <br />
+                <code>
+                    > Creating privacy services for various forms of bitcoin.
+                    <br />
+                    <br />
+                    > Focus on developing the economies which use blinded ecash
+                    from federated chaumian mints.
+                </code>
+            </p>
         </div>
     </div>
+
+    <script>
+        function shuffleArray(array) {
+            for (var i = array.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+        function rotate_members() {
+            var members_arr = [
+                'Dan <small>aka</small> <a href="https://github.com/DanGould">BITGOULD</a>',
+                'Nick <small>aka</small> <a href="https://github.com/nickfarrow">UTXOCLUB</a>',
+                'Armin <small>aka</small> <a href="https://github.com/0xBEEFCAF3">0xBEEFCAF3</a>',
+            ];
+            var shuff_members = shuffleArray(members_arr);
+            document.getElementById("members").innerHTML =
+                members_arr.join("<br>");
+        }
+
+        rotate_members();
+        rotate_interval = setInterval(function () {
+            rotate_members();
+        }, 1000);
+    </script>
 </html>
