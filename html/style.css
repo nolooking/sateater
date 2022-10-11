@@ -68,10 +68,18 @@ p {
 }
 
 a {
-    text-decoration-color: rgb(0, 255, 234);
-    color: #01adc4;
-    font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
+    color: #0098ac;
+    font-weight: 600;
+    font-family: Lucida Console, Liberation Mono,
         DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New;
+    /* text-decoration:underline; */
+    text-decoration-thickness: 1px;
+    /* text-decoration-line: underline; */
+    text-decoration-style: double;
+}
+
+a:hover {
+    color: rgb(255, 136, 0);
 }
 
 li {
