@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Primary Meta Tags -->
+        <title>nolooking - Multistage Rust Docker Builds for Umbrel Apps</title>
+        <meta
+            name="title"
+            content="nolooking - Multistage Rust Docker Builds for Umbrel Apps"
+        />
+        <meta name="description" content="Learn to package your Rust code and cryptographic bitcoin magic with Docker for distribution via Umbrel" />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://nolooking.chaincase.app/" />
+        <meta
+            property="og:title"
+            content="nolooking - Multistage Rust Docker Builds for Umbrel Apps"
+        />
+        <meta property="og:description" content="Learn to package your Rust code and cryptographic bitcoin magic with Docker for distribution via Umbrel" />
+        <meta
+            property="og:image"
+            content="https://user-images.githubusercontent.com/24557779/196854219-6a167a0d-91d7-4087-9ee6-6b50ac1d8a5b.png"
+        />
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta
+            property="twitter:url"
+            content="https://nolooking.chaincase.app/"
+        />
+        <meta
+            property="twitter:title"
+            content="nolooking - Multistage Rust Docker Builds for Umbrel Apps"
+        />
+        <meta property="twitter:description" content="Learn to package your Rust code and cryptographic bitcoin magic with Docker for distribution via Umbrel" />
+        <meta
+            property="twitter:image"
+            content="https://user-images.githubusercontent.com/24557779/196854219-6a167a0d-91d7-4087-9ee6-6b50ac1d8a5b.png"
+        />
+
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+        <script
+            src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"
+        ></script>
+
+        <link rel="stylesheet" href="style.css" />
+        <script src="script.js"></script>
+    </head>
+
+    <div class="row vertical-center cover-container fill vh-100 h-100 w-100">
+        <div class="col-lg-5 mx-auto g-0 p-4 text-break">
+            <a href="/">
+                <img
+                    src="banner.gif"
+                    style="max-width: 400px"
+                    class="img-responsive"
+                />
+            </a>
+            <h3>
+                Assembled for the
+                <a
+                    href="https://makers.bolt.fun/tournaments/1/overview"
+                    target="_blank"
+                >
+                    Legends of Lightning
+                </a>
+                Hackathon.
+            </h3>
+            <hr />
+            <div>
+                <nav class="navbar navbar-expand-sm">
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#navbarNav"
+                        aria-controls="navbarNav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    href="https://github.com/nolooking"
+                                    >Github</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/donate.html"
+                                    >Support</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    href="https://makers.bolt.fun/project/nolooking"
+                                    >Maker.fun</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+            <h1 id="multistage-rust-docker-builds-for-umbrel-apps">Multistage Rust Docker Builds for Umbrel Apps</h1>
+<h3 id="-learn-to-package-your-rust-code-and-cryptographic-bitcoin-magic-with-docker-for-distribution-via-umbrel-"><strong><em>Learn to package your Rust code and cryptographic bitcoin magic with Docker for distribution via Umbrel</em></strong></h3>
+<p>To create an Umbrel app (or any similar Rapsberry Pi app), you will need to create <code>statically linked</code> binaries contained in <code>docker images</code> that are created from <code>multistage builds</code>, for both <code>x86</code> and <code>arm</code> targets 💣</p>
+<p>You may want to know wtf that all means if you want to ship your Rust code. 🦀</p>
+<h2 id="let-docker-lego-but-not-as-fun-">let Docker = &quot;Lego, but not as fun&quot;;</h2>
+<p>Docker is containerization software, best demonstrating it&#39;s elegance through the isolation of individual applications into their own sandboxed environment. Docker turns software into lego blocks.</p>
+<p><img src="https://user-images.githubusercontent.com/24557779/196854219-6a167a0d-91d7-4087-9ee6-6b50ac1d8a5b.png" alt="DALL·E 2022-10-20 15 07 24 - photo of orange crabs made out of lego fighting on the shipping docks" width="600"/></p>
+<p>are you feeling it now mr krabs  (ﾟ⚙͠ | ∀ |⚙͠)</p>
+<p>In the past some of us have <strong>hated docker for making software lego</strong>, running up against the pains of interacting with and modifying containers software. But slowly, we are converted for reasons:</p>
+<p><a href="https://umbrel.com/">Umbrel</a> is a bitcoin node-in-a-box platform, and the Umbrel app store is a stylish demonstration of containerisation. Each individual Umbrel application runs within it&#39;s own docker container. Programs are isolated into their own long-lived storage file systems, and internet traffic is only allowed to flow through explicitly defined ports.</p>
+<p>This standardization and containerization is a superpower for building modular systems that are robust to failure of individual software applications.</p>
+<p>Creating a Docker container involves building your code from a <code>Dockerfile</code>, where you specify how to install your software from scratch using a base <code>image</code>. We can think of base images as a fresh linux installation with no deviation such that the installation steps are deterministically guaranteed to work; you can tell me if that is not accurate.</p>
+<p>With docker you can have even slimmer images than base linux, such as just using <code>python</code> or the super minimal <code>scratch</code> (virtually empty).</p>
+<h2 id="umbrel-">Umbrel ☂</h2>
+<p>For Umbrel, our bitcoin node (bitcoind) and lightning node (lnd) run in separate containers. If your LND container were to catastrophically fail and crash, then your bitcoind container would be completely unaffected.</p>
+<p>Given Umbrel is such a user friendly and approachable node box, and has such a large userbase, <strong>Umbrel is primed to distribute your Bitcoin software to the masses</strong>.</p>
+<p><img src="https://user-images.githubusercontent.com/24557779/196846966-b61eabb0-06be-4bb7-826f-e7be180fd426.png" alt="UMBREL APP STORE" width="100%"></p>
+<h2 id="rust-">Rust 🦀</h2>
+<p>We will refrain from our own evangelism, but Rust is undeniably the rising star of programming languages in Bitcoin and beyond. We are seeing powerful Rust libraries like Bitcoin Dev Kit (BDK) and Lightning Dev Kit (LDK) being built upon, and cryptographic munitions are slowly being pushed out to the people. </p>
+<p>In my view <strong>there is a significant gap between the vast magic occurring in Bitcoin Rust git repositories, compared to the select few Rust programs that are actually reaching Bitcoiners</strong>.</p>
+<p>Rust is a compiled language, where a compiler translates the program&#39;s source code into machine code that the computer can understand. This step of compiling allows software to be compiled into small packaged executable <code>binaries</code>, which run quickly and can be easily distributed.</p>
+<p>However your software dependencies and resulting <code>binary</code> must correspond to a language your machine can understand - the <em>instruction set architecture</em> or <code>computer architecture</code>:</p>
+<p><img src="https://user-images.githubusercontent.com/24557779/196847270-a13f5d90-91d6-4fe3-979f-663dda4d5253.png" alt="BITCOIN CORE"> nerd words</p>
+<p>Architecture dependence can be annoying, since <strong>we need our application to easily work across a range of devices</strong>. Umbrel for example, requires <code>x86</code> and <code>arm</code> support (e.g for your laptop test-env (AMD) and your raspberry-pi prod (ARM)). </p>
+<p>How are we to handle this variation of architecture in our clean docker builds?</p>
+<h2 id="the-docker-file-multistage-rust-x86-and-arm">The Docker File: Multistage Rust x86 and ARM</h2>
+<p>Suppose</p>
+<blockquote>
+<p>Given a programming language which does not natively implement <code>If</code>-<code>Else</code> statements, there exists a stackoverflow Q&amp;A of how to hack them in. <a href="https://stackoverflow.com/a/60820156">[1]</a></p>
+</blockquote>
+<p>Here we present to you a Dockerfile that will:</p>
+<ol>
+<li>Conditionally compile to either <code>x86</code> or <code>arm</code>, depending on the provided <code>docker build --platform</code>.</li>
+<li>Utilize multistage builds, meaning that your code is first compiled into a binary, and then just the binary alone is copied into the final docker image. We delete all the build files and dependencies!</li>
+<li>Use statically linked <code>musl</code> targets of <code>x86_64-unknown-linux-musl</code> and <code>aarch64-unknown-linux-musl</code>, meaning all your dependencies are compiled into the executable, and you hopefully don&#39;t have to worry about a thing.</li>
+</ol>
+<p>In your cargo repository write a <code>Dockerfile</code>:</p>
+<pre><code><span class="hljs-comment"># Multistage Rust Docker Build for Umbrel App</span>
+<span class="hljs-comment"># by utxo.club</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment"># x86_64-unknown-linux-musl</span>
+<span class="hljs-comment"># aarch64-unknown-linux-musl</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment"># Conditionally `cargo build` for platforms of x86_64 or ARM.</span>
+<span class="hljs-comment"># Use musl for static linking, producing a standalone executable with no dependencies.</span>
+<span class="hljs-comment"># In the final Docker stage we copy the built binary to alpine, and run with environment:</span>
+<span class="hljs-comment"># $LND_HOST, $LND_GRPC_PORT, $TLS_FILE, $MACAROON_FILE"</span>
+
+<span class="hljs-comment">## Initial build Stage </span>
+<span class="hljs-keyword">FROM</span> rustlang/rust:nightly AS builder
+<span class="hljs-comment"># Target architecture argument used to change build</span>
+ARG TARGETARCH
+<span class="hljs-comment"># Some nicer rust debugging</span>
+<span class="hljs-keyword">ENV</span> RUSTFLAGS=<span class="hljs-string">"-Z macro-backtrace"</span>
+<span class="hljs-keyword">ENV</span> RUST_BACKTRACE=<span class="hljs-number">1</span>
+<span class="hljs-comment"># Copy the required build files. In this case, these are all the files that</span>
+<span class="hljs-comment"># are used for both architectures.</span>
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /usr/src/loin
+</span><span class="hljs-keyword">COPY</span><span class="bash"> Cargo.toml Cargo.lock build.rs ./
+</span><span class="hljs-keyword">COPY</span><span class="bash"> src ./src
+</span>
+<span class="hljs-comment">## x86_64</span>
+<span class="hljs-keyword">FROM</span> builder AS branch-version-amd64
+<span class="hljs-keyword">RUN</span><span class="bash"> <span class="hljs-built_in">echo</span> <span class="hljs-string">"Preparing to cargo build for x86_64 (<span class="hljs-variable">${TARGETARCH}</span>)"</span>
+</span><span class="hljs-comment"># Install the required dependencies to build for `musl` static linking</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install -y musl-tools musl-dev
+</span><span class="hljs-comment"># Add our x86 target to rust, then compile and install</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> rustup target add x86_64-unknown-linux-musl
+</span><span class="hljs-keyword">RUN</span><span class="bash"> cargo install --features=test_paths --target x86_64-unknown-linux-musl --path .
+</span>
+<span class="hljs-comment"># ARM</span>
+<span class="hljs-keyword">FROM</span> builder AS branch-version-arm64
+<span class="hljs-keyword">RUN</span><span class="bash"> <span class="hljs-built_in">echo</span> <span class="hljs-string">"Preparing to cargo build for arm (<span class="hljs-variable">${TARGETARCH}</span>)"</span>
+</span><span class="hljs-comment"># Install the required dependencies to build for `musl` static linking for arm.</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install musl-tools clang llvm -y
+</span><span class="hljs-comment"># Add our arm target to rust, some build variables, then compile and install</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> rustup target add aarch64-unknown-linux-musl
+</span><span class="hljs-keyword">ENV</span> CC_aarch64_unknown_linux_musl=clang
+<span class="hljs-keyword">ENV</span> AR_aarch64_unknown_linux_musl=llvm-ar
+<span class="hljs-keyword">ENV</span> CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS=<span class="hljs-string">"-Clink-self-contained=yes -Clinker=rust-lld"</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> cargo install --features=test_paths --target aarch64-unknown-linux-musl --path .
+</span>
+<span class="hljs-comment"># We build for either x86_64 or ARM from above options using the docker $TARGETARCH</span>
+<span class="hljs-keyword">FROM</span> branch-version-${TARGETARCH} AS chosen_builder
+<span class="hljs-keyword">RUN</span><span class="bash"> <span class="hljs-built_in">echo</span> <span class="hljs-string">"Called build!"</span>
+</span>
+<span class="hljs-comment"># Run Loin from a final debian container</span>
+<span class="hljs-keyword">FROM</span> debian:buster-slim
+<span class="hljs-comment"># Copy just the binary from our build stage</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> --from=chosen_builder /usr/<span class="hljs-built_in">local</span>/cargo/bin/loin /usr/<span class="hljs-built_in">local</span>/bin/loin
+</span><span class="hljs-comment"># Expose any necessary ports</span>
+<span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">4444</span>
+<span class="hljs-comment"># Run</span>
+<span class="hljs-keyword">CMD</span><span class="bash"> [<span class="hljs-string">"loin"</span>]</span>
+</code></pre><p>Build and push to Dockerhub with:</p>
+<pre><code><span class="hljs-comment">sudo</span> <span class="hljs-comment">docker</span> <span class="hljs-comment">buildx</span> <span class="hljs-comment">build</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">platform</span> <span class="hljs-comment">linux/arm64</span><span class="hljs-string">,</span><span class="hljs-comment">linux/amd64</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">tag</span> <span class="hljs-comment">dockeruser/myapp:0</span><span class="hljs-string">.</span><span class="hljs-comment">0</span><span class="hljs-string">.</span><span class="hljs-comment">1</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">output</span> <span class="hljs-comment">type=registry</span> <span class="hljs-string">.</span>
+</code></pre><p><img src="https://user-images.githubusercontent.com/24557779/196854389-3083107d-cee2-404d-b62a-225d6534ca31.png" alt="DALL·E 2022-10-20 15 07 30 - orange crabs fighting on the shipping docks  The clouds are made of matrix code" width="600"/>
+hellish</p>
+<h2 id="how-does-it-work-">How does it work?</h2>
+<p>Thankfully Docker provides an environment variable <code>${TARGETARCH}</code> which is set to the the target architecture for our build.</p>
+<p>In one build stages, we expand <code>${TARGETARCH}</code> to conditionally select to build from one of either <code>branch-version-amd64</code> or <code>branch-version-arm64</code> (for x86, ARM).</p>
+<p>We follow the build path for the relevant architecture using the Dockerfile line:</p>
+<pre><code>FROM branch-<span class="hljs-keyword">version</span>-<span class="hljs-variable">${TARGETARCH}</span> <span class="hljs-keyword">AS</span> chosen_builder
+</code></pre><h2 id="so-">So?</h2>
+<p>You should build a docker image for your bitcoin Rust project and smoothly push it out to thousands of people, if you don&#39;t have any rust bitcoin project you should <a href="https://github.com/bitcoindevkit/bdk">start one today</a>.</p>
+<p>Follow <a href="https://github.com/getumbrel/umbrel-apps/">this tutorial</a> to test and release your software on your Umbrel or similar platform like sovereign computing @ <a href="https://twitter.com/start9labs">Start9</a>.</p>
+<p>We have a number of software libraries which we look forward to making front-ends for in the near future, and to then push them out for experimental and distributed use.</p>
+<p><a href="https://gist.github.com/nickfarrow/83b4eb6f462a9498f832c46b7219a559">Raw Dockerfile</a></p>
+<p>We created this docker image for the Legends of Lightning Hackathon. check out our project <a href="https://nolooking.chaincase.app">nolooking</a>.</p>
+
+
+        </div>
+    </div>
+</html>
