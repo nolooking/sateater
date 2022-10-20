@@ -3,22 +3,40 @@
     <head>
         <!-- Primary Meta Tags -->
         <title>nolooking - Legends of Lightning Hackathon Team</title>
-        <meta name="title" content="nolooking - Legends of Lightning Hackathon Team">
-        <meta name="description" content="DAN NICK ARMIN">
+        <meta
+            name="title"
+            content="nolooking - Legends of Lightning Hackathon Team"
+        />
+        <meta name="description" content="DAN NICK ARMIN" />
 
         <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="https://nolooking.chaincase.app/">
-        <meta property="og:title" content="nolooking - Legends of Lightning Hackathon Team">
-        <meta property="og:description" content="DAN NICK ARMIN">
-        <meta property="og:image" content="https://nolooking.chaincase.app/header.png">
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://nolooking.chaincase.app/" />
+        <meta
+            property="og:title"
+            content="nolooking - Legends of Lightning Hackathon Team"
+        />
+        <meta property="og:description" content="DAN NICK ARMIN" />
+        <meta
+            property="og:image"
+            content="https://nolooking.chaincase.app/header.png"
+        />
 
         <!-- Twitter -->
-        <meta property="twitter:card" content="summary_large_image">
-        <meta property="twitter:url" content="https://nolooking.chaincase.app/">
-        <meta property="twitter:title" content="nolooking - Legends of Lightning Hackathon Team">
-        <meta property="twitter:description" content="DAN NICK ARMIN">
-        <meta property="twitter:image" content="https://nolooking.chaincase.app/header.png">
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta
+            property="twitter:url"
+            content="https://nolooking.chaincase.app/"
+        />
+        <meta
+            property="twitter:title"
+            content="nolooking - Legends of Lightning Hackathon Team"
+        />
+        <meta property="twitter:description" content="DAN NICK ARMIN" />
+        <meta
+            property="twitter:image"
+            content="https://nolooking.chaincase.app/header.png"
+        />
 
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -46,12 +64,17 @@
         ></script>
 
         <link rel="stylesheet" href="style.css" />
+        <script src="script.js"></script>
     </head>
 
     <div class="row vertical-center cover-container fill vh-100 h-100 w-100">
         <div class="col-lg-5 mx-auto g-0 p-4 text-break">
             <a href="#">
-                <img src="banner.gif" style="max-width:400px;" class="img-responsive">
+                <img
+                    src="banner.gif"
+                    style="max-width: 400px"
+                    class="img-responsive"
+                />
             </a>
             <h3>
                 Assembled for the
@@ -63,7 +86,7 @@
                 </a>
                 Hackathon.
             </h3>
-            <hr>
+            <hr />
             <div>
                 <nav class="navbar navbar-expand-sm">
                     <button
@@ -88,7 +111,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/donate.html"
-                                    >Donate</a
+                                    >Support</a
                                 >
                             </li>
                             <li class="nav-item">
@@ -128,10 +151,48 @@
                     > Creating privacy services for various forms of bitcoin.
                     <br />
                     <br />
-                    > Focus on developing tools for economies which use blinded ecash
-                    from federated chaumian mints.
+                    > Focus on developing tools for economies which use blinded
+                    ecash from federated chaumian mints.
                 </code>
             </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-5 mx-auto g-0 p-4 text-break">
+            <h2>Support Us</h2>
+            <form onsubmit="return click_pay()">
+                <div class="input-group">
+                    <input
+                        type="text"
+                        style="text-align: right"
+                        class="form-control"
+                        id="amount"
+                        placeholder="Amount (sats)"
+                    />
+                    <div class="input-group-append">
+                        <button
+                            class="btn-info"
+                            type="submit"
+                            id="clickgo"
+                            value="Go"
+                        >
+                            Pay
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <p id="payment_response"></p>
+            <div id="payment_div" style="display: none">
+                <code id="address" style="word-break: break-word"></code>
+            </div>
+            <br />
+            <br />
+            <img
+                id="qr"
+                class="mx-auto d-block"
+                style="display: none; max-width: 300px"
+            />
+            <h3 id="payment_status"></h3>
         </div>
     </div>
 
