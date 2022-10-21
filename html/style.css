@@ -19,11 +19,12 @@ body {
 
 h1 {
     font-weight: 1000;
-    font-size: 4em;
+    font-size: 3em;
+    text-shadow: 10px 10px 15px rgb(0, 0, 0);
     background-image: conic-gradient(
         from 0deg at 0% 0%,
-        rgb(255, 174, 0),
-        rgb(0, 255, 242)
+        rgb(255, 0, 0),
+        rgb(255, 251, 0)
     );
     color: transparent;
     background-clip: text;
