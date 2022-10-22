@@ -1,6 +1,9 @@
 #[macro_use]
 extern crate rocket;
 
+pub mod cashu;
+
+use cashu::cashu_receive;
 use configparser::ini::Ini;
 // use clightningrpc::LightningRPC;
 use qrcode_generator::QrCodeEcc;
@@ -142,10 +145,24 @@ pub async fn check_payment(payment_id: String) -> (Status, Json<PaymentStatusRes
     (Status::Accepted, Json(response))
 }
 
+#[get("/receive_ecash?<token>")]
+pub async fn receive_ecash(token: String) -> (Status, Json<PaymentStatusResponse>) {
+    let response = PaymentStatusResponse {
+        payment_complete: cashu::cashu_receive(&token),
+        // For later doing onchain
+        confirmed_paid: 0,
+        unconfirmed_paid: 0,
+    };
+    (Status::Accepted, Json(response))
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         // .attach(Main::init())
         .mount("/", FileServer::from("./html"))
-        .mount("/api", routes![create_payment, check_payment])
+        .mount(
+            "/api",
+            routes![create_payment, check_payment, receive_ecash],
+        )
 }

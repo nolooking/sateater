@@ -56,6 +56,29 @@
                     </div>
                 </div>
             </form>
+            <h3 style="float:right">OR</h3>
+            <form onsubmit="return send_ecash()">
+                <div class="input-group">
+                    <input
+                        type="text"
+                        style="text-align: right"
+                        class="form-control"
+                        id="ecashtoken"
+                        placeholder="E-cash token (sats)"
+                    />
+                    <div class="input-group-append">
+                        <button
+                            class="btn-info"
+                            type="submit"
+                            id="clickgo"
+                            value="Go"
+                        >
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <small>Currently we only accept e-cash from the <a href="https://github.com/callebtc/cashu">CashU</a> ecosystem.</small>
             <p id="payment_response"></p>
             <div id="payment_div" style="display: none">
                 <code id="address" style="word-break: break-word"></code>
