@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
+use configparser::ini::Ini;
 // use clightningrpc::LightningRPC;
 use qrcode_generator::QrCodeEcc;
 use rocket::{fs::FileServer, http::Status, serde::json::Json};
@@ -8,13 +9,7 @@ use serde::Serialize;
 
 // const RPC_FILE: &str = "lightning-rpc";
 
-const ADDRESS: &str = "https://127.0.0.1:10009";
-const CERT_FILE: &str = "tls.cert";
-const MACAROON_FILE: &str = "admin.macaroon";
-const DEFAULT_LABEL: &str = "thanks!";
-
-// Database not required
-
+// // Database not required
 // use rocket_db_pools::{
 //     sqlx::{self, Sqlite, Transaction},
 //     Database,
@@ -22,6 +17,23 @@ const DEFAULT_LABEL: &str = "thanks!";
 // #[derive(Database)]
 // #[database("main")]
 // pub struct Main(sqlx::SqlitePool);
+
+fn load_conf() -> (String, String, String, String) {
+    let mut config = Ini::new();
+    let map = config
+        .load("./config.cfg")
+        .expect("config.cfg does not exist! please copy config_example.cfg");
+
+    let address = config.get("lnd", "address").expect("address provided");
+    let cert = config.get("lnd", "certfile").expect("cert provided");
+    let macaroon = config
+        .get("lnd", "macaroonfile")
+        .expect("macaroon provided");
+    let label = config
+        .get("lnd", "defaultlabel")
+        .expect("default label provided");
+    (address, cert, macaroon, label)
+}
 
 #[derive(Serialize, Debug)]
 pub struct PaymentResponse {
@@ -38,17 +50,14 @@ pub async fn create_payment(
 ) -> (Status, Json<PaymentResponse>) {
     // let node = LightningRPC::new(RPC_FILE);
     // let payment_id = Uuid::new_v4();
-    let mut client = tonic_lnd::connect_lightning(
-        ADDRESS.to_string(),
-        CERT_FILE.to_string(),
-        MACAROON_FILE.to_string(),
-    )
-    .await
-    .expect("failed to connect");
+    let (address, cert, macaroon, label) = load_conf();
+    let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
+        .await
+        .expect("failed to connect");
 
     let description = match message {
         Some(message) => message,
-        None => DEFAULT_LABEL.to_string(),
+        None => label,
     };
 
     // let sat_amount = amount.checked_mul(1000).expect("not billions(?) of sats") as i64;
@@ -106,14 +115,10 @@ pub struct PaymentStatusResponse {
 
 #[get("/check_payment?<payment_id>")]
 pub async fn check_payment(payment_id: String) -> (Status, Json<PaymentStatusResponse>) {
-    // let node = LightningRPC::new(RPC_FILE);
-    let mut client = tonic_lnd::connect_lightning(
-        ADDRESS.to_string(),
-        CERT_FILE.to_string(),
-        MACAROON_FILE.to_string(),
-    )
-    .await
-    .expect("failed to connect");
+    let (address, cert, macaroon, label) = load_conf();
+    let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
+        .await
+        .expect("failed to connect");
 
     let payment_hash = tonic_lnd::lnrpc::PaymentHash {
         r_hash: hex::decode(payment_id).expect("valid payment hash"),
