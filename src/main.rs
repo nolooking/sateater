@@ -3,7 +3,6 @@ extern crate rocket;
 
 pub mod cashu;
 
-use cashu::cashu_receive;
 use configparser::ini::Ini;
 // use clightningrpc::LightningRPC;
 use qrcode_generator::QrCodeEcc;
@@ -23,7 +22,7 @@ use serde::Serialize;
 
 fn load_conf() -> (String, String, String, String) {
     let mut config = Ini::new();
-    let map = config
+    let _map = config
         .load("./config.cfg")
         .expect("config.cfg does not exist! please copy config_example.cfg");
 
@@ -118,7 +117,7 @@ pub struct PaymentStatusResponse {
 
 #[get("/check_payment?<payment_id>")]
 pub async fn check_payment(payment_id: String) -> (Status, Json<PaymentStatusResponse>) {
-    let (address, cert, macaroon, label) = load_conf();
+    let (address, cert, macaroon, _label) = load_conf();
     let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
         .await
         .expect("failed to connect");
