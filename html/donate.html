@@ -34,7 +34,8 @@
 
     <div class="row vertical-center cover-container fill vh-100 h-100 w-100">
         <div class="col-lg-6 mx-auto g-0 p-4 text-break">
-            <h2>Donate</h2>
+            <h1>Support Us</h1>
+            <h3>Lightning</h3>
             <form onsubmit="return click_pay()">
                 <div class="input-group">
                     <input
@@ -56,6 +57,31 @@
                     </div>
                 </div>
             </form>
+            <br>
+            <h3 style="text-align: center;">OR</h3>
+            <h3>E-Cash</h3>
+            <form onsubmit="return send_ecash()">
+                <div class="input-group">
+                    <input
+                        type="text"
+                        style="text-align: right"
+                        class="form-control"
+                        id="ecashtoken"
+                        placeholder="E-cash token (sats)"
+                    />
+                    <div class="input-group-append">
+                        <button
+                            class="btn-info"
+                            type="submit"
+                            id="clickgo"
+                            value="Go"
+                        >
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <small>Currently we only accept e-cash from the <a href="https://github.com/callebtc/cashu">CashU</a> ecosystem.</small>
             <p id="payment_response"></p>
             <div id="payment_div" style="display: none">
                 <code id="address" style="word-break: break-word"></code>

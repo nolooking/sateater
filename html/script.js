@@ -45,3 +45,25 @@ function click_pay() {
         .catch((error) => console.log(error));
     return false;
 }
+
+
+
+function send_ecash() {
+    fetch(
+        "/api/receive_ecash?" +
+            new URLSearchParams({
+                token: document.getElementById("ecashtoken").value,
+            })
+    )
+        .then((response) => response.json())
+        .then(function (data) {
+            console.log(data);
+            if (data.payment_complete) {
+                document.getElementById("payment_response").innerHTML = "Thank you!"
+            } else {
+                document.getElementById("payment_response").innerHTML = "token failed :( try again?";
+            }
+        })
+        .catch((error) => console.log(error));
+    return false;
+}

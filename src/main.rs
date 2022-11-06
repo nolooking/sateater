@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate rocket;
 
+pub mod cashu;
+
 use configparser::ini::Ini;
 // use clightningrpc::LightningRPC;
 use qrcode_generator::QrCodeEcc;
@@ -20,7 +22,7 @@ use serde::Serialize;
 
 fn load_conf() -> (String, String, String, String) {
     let mut config = Ini::new();
-    let map = config
+    let _map = config
         .load("./config.cfg")
         .expect("config.cfg does not exist! please copy config_example.cfg");
 
@@ -115,7 +117,7 @@ pub struct PaymentStatusResponse {
 
 #[get("/check_payment?<payment_id>")]
 pub async fn check_payment(payment_id: String) -> (Status, Json<PaymentStatusResponse>) {
-    let (address, cert, macaroon, label) = load_conf();
+    let (address, cert, macaroon, _label) = load_conf();
     let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
         .await
         .expect("failed to connect");
@@ -142,10 +144,24 @@ pub async fn check_payment(payment_id: String) -> (Status, Json<PaymentStatusRes
     (Status::Accepted, Json(response))
 }
 
+#[get("/receive_ecash?<token>")]
+pub async fn receive_ecash(token: String) -> (Status, Json<PaymentStatusResponse>) {
+    let response = PaymentStatusResponse {
+        payment_complete: cashu::cashu_receive(&token),
+        // For later doing onchain
+        confirmed_paid: 0,
+        unconfirmed_paid: 0,
+    };
+    (Status::Accepted, Json(response))
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         // .attach(Main::init())
         .mount("/", FileServer::from("./html"))
-        .mount("/api", routes![create_payment, check_payment])
+        .mount(
+            "/api",
+            routes![create_payment, check_payment, receive_ecash],
+        )
 }
