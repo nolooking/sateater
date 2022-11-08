@@ -1,11 +1,11 @@
 html,
 body {
     background: conic-gradient(
-        from 0deg at 0% 0%,
-        rgb(5, 0, 2),
-        rgb(0, 56, 73)
+        from 45deg at 14% 12%,
+        rgb(34, 118, 124),
+        rgb(51, 87, 99)
     );
-    color: rgb(220, 220, 220);
+    color: rgb(85, 26, 19);
     text-align: left;
     width: 100%;
 }
@@ -23,7 +23,7 @@ h1 {
     text-shadow: 10px 10px 15px rgb(0, 0, 0);
     background-image: conic-gradient(
         from 0deg at 0% 0%,
-        rgb(255, 0, 0),
+        rgb(69, 150, 80),
         rgb(255, 251, 0)
     );
     color: transparent;
@@ -35,8 +35,8 @@ h2 {
     font-weight: 600;
     background-image: conic-gradient(
         from 0deg at 0% 0%,
-        rgb(255, 174, 0),
-        rgb(0, 255, 242)
+        rgb(110, 96, 64),
+        rgb(212, 0, 142)
     );
     color: transparent;
     background-clip: text;
@@ -47,8 +47,8 @@ h3 {
     font-weight: 600;
     background-image: conic-gradient(
         from 0deg at 0% 0%,
-        rgb(255, 174, 0),
-        rgb(0, 255, 242)
+        rgb(27, 14, 14),
+        rgb(128, 113, 49)
     );
     color: transparent;
     background-clip: text;
@@ -60,8 +60,8 @@ p {
     font-weight: 400;
     background-image: conic-gradient(
         from 0deg at 0% 0%,
-        rgb(175, 26, 26),
-        rgba(208, 255, 0, 0.986)
+        rgb(196, 131, 115),
+        rgba(255, 153, 0, 0.986)
     );
     color: transparent;
     background-clip: text;
@@ -69,18 +69,19 @@ p {
 }
 
 a {
-    color: #0098ac;
+    color: #1ea370;
     font-weight: 600;
     font-family: Lucida Console, Liberation Mono,
         DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New;
     /* text-decoration:underline; */
-    text-decoration-thickness: 1px;
-    /* text-decoration-line: underline; */
-    text-decoration-style: double;
+    text-decoration-thickness: 3px;
+    text-decoration-color: gray;
+    text-decoration-line: underline;
+    /* text-decoration-style: double; */
 }
 
 a:hover {
-    color: rgb(255, 136, 0);
+    color: rgb(255, 0, 0);
 }
 
 li {
