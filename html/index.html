@@ -126,6 +126,11 @@
             </div>
             <hr>
             <br>
+            <h3><i>Joining the lightning network is daunting</i></h3>
+            <p>
+                <b>We abstract the whole "getting connected" stage of lightning node setup for operators into a single QR code that prepares one bitcoin transaction to get a node fully connected to multiple channels.</b>
+            </p>
+            <br>
             <h3>Posts:</h3>
             <h3><a href="https://makers.bolt.fun/story/try-us-on-umbrel-nolooking--324">Try us on Umbrel!</a> (most recent)</h3>
             <h3><a href="https://makers.bolt.fun/story/nolooking-week-3-retro--318">Nolooking: week 3 retro</a></h3>
@@ -137,13 +142,23 @@
             <h3>Members:</h3>
             <p id="members"></p>
             <br />
+            <hr>
+
+            <h3><i>nolooking for easy lightning onboarding</i></h3>
+            <p>
+                If you follow the usual setup process for a new lightning node, you must first fund your new node using an on-chain transaction. After first depositing to your node you must wait for several ~10-minute confirmations, and then you can open channels one at a time. 
+                <br>
+                <br>
+                Opening each channel costs on-chain mining fees, and makes you wait for confirmations between successive channel opens. Plus it is difficult to know when you have sufficient connections.
+            </p>
+            <br>
+            <h3 style="font-family: Lucida Console">Research areas</h3>
             <p>
                 <b> Making Lightning Channels Easier and More Private </b>
                 <br />
                 <code>
                     > Building a lightning channel generator which uses
                     collaborative bitcoin transactions called payjoins.
-                    <br />
                     <br />
                     > Queue up lightning channels, a new one opens whenever you
                     recieve an onchain bitcoin payment.
@@ -155,7 +170,6 @@
                 <br />
                 <code>
                     > Creating privacy services for various forms of bitcoin.
-                    <br />
                     <br />
                     > Focus on developing tools for economies which use blinded
                     ecash from federated chaumian mints.
