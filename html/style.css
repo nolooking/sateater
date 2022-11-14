@@ -1,11 +1,7 @@
 html,
 body {
-    background: conic-gradient(
-        from 45deg at 14% 12%,
-        rgb(34, 118, 124),
-        rgb(51, 87, 99)
-    );
-    color: rgb(85, 26, 19);
+    background-image: linear-gradient(to bottom, rgb(19, 19, 19), rgb(14, 10, 88));
+    color: rgb(5, 247, 255);
     text-align: left;
     width: 100%;
 }
@@ -24,7 +20,7 @@ h1 {
     background-image: conic-gradient(
         from 0deg at 0% 0%,
         rgb(69, 150, 80),
-        rgb(255, 251, 0)
+        rgb(0, 255, 179)
     );
     color: transparent;
     background-clip: text;
@@ -47,8 +43,21 @@ h3 {
     font-weight: 600;
     background-image: conic-gradient(
         from 0deg at 0% 0%,
-        rgb(27, 14, 14),
-        rgb(128, 113, 49)
+        rgb(83, 21, 153),
+        rgb(0, 255, 183)
+    );
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+h4 {
+    font-size: large;
+    font-weight: 300;
+    background-image: conic-gradient(
+        from 0deg at 0% 0%,
+        rgb(83, 21, 153),
+        rgb(0, 255, 183)
     );
     color: transparent;
     background-clip: text;
@@ -90,7 +99,7 @@ li {
 }
 
 code {
-    color: rgb(166, 219, 18);
+    color: rgb(149, 60, 5);
 }
 
 
