@@ -2,6 +2,7 @@
 extern crate rocket;
 
 pub mod cashu;
+pub mod wildcard;
 
 use configparser::ini::Ini;
 // use clightningrpc::LightningRPC;
@@ -162,6 +163,11 @@ fn rocket() -> _ {
         .mount("/", FileServer::from("./html"))
         .mount(
             "/api",
-            routes![create_payment, check_payment, receive_ecash],
+            routes![
+                create_payment,
+                check_payment,
+                receive_ecash,
+                wildcard::wildcard,
+            ],
         )
 }
