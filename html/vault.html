@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+                <!-- Primary Meta Tags -->
+        <title>The Vault.</title>
+        <meta
+            name="title"
+            content="The Vault."
+        />
+        <meta name="description" content="Well? 🐀13 🥜" />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://nolooking.chaincase.app/" />
+        <meta
+            property="og:title"
+            content="The Vault."
+        />
+        <meta property="og:description" content="Well? 🐀13 🥜" />
+        <meta
+            property="og:image"
+            content="https://nolooking.chaincase.app/vault_header.png"
+        />
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta
+            property="twitter:url"
+            content="https://nolooking.chaincase.app/"
+        />
+        <meta
+            property="twitter:title"
+            content="The Vault."
+        />
+        <meta property="twitter:description" content="Well? 🐀13 🥜" />
+        <meta
+            property="twitter:image"
+            content="https://nolooking.chaincase.app/vault_header.png"
+        />
+
+
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+        <script
+            src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"
+        ></script>
+
+        <link rel="stylesheet" href="style.css" />
+        <script src="/vault.js"></script>
+        <style>
+            html,
+            body {
+                background: conic-gradient(
+                    from 0deg at 0% 0%,
+                    rgb(7, 7, 7),
+                    rgb(3, 3, 3)
+                );
+            }
+        </style>
+    </head>
+
+    <div class="row vertical-center cover-container fill vh-100 h-100 w-100">
+        <div class="col-lg-6 mx-auto g-0 p-4 text-break">
+            <h1>The Vault</h1>
+            <br />
+            <form onsubmit="return unlock()">
+                <div class="input-group">
+                    <input
+                        type="radio"
+                        id="red"
+                        name="color_choice"
+                        value="1"
+                    />
+                    <label for="red"
+                        ><span style="color: red; font-size: 2em; padding: 20px"
+                            >Red</span
+                        ></label
+                    ><br />
+                    <input
+                        type="radio"
+                        id="blue"
+                        name="color_choice"
+                        value="2"
+                    />
+                    <label for="blue"
+                        ><span
+                            style="color: cyan; font-size: 2em; padding: 20px"
+                            >Blue</span
+                        ></label
+                    ><br />
+                    <input
+                        type="radio"
+                        id="green"
+                        name="color_choice"
+                        value="3"
+                    />
+                    <label for="green"
+                        ><span
+                            style="
+                                color: olivedrab;
+                                font-size: 2em;
+                                padding: 20px;
+                            "
+                            >Green</span
+                        ></label
+                    ><br />
+                    <input
+                        type="radio"
+                        id="yellow"
+                        name="color_choice"
+                        value="4"
+                    />
+                    <label for="yellow"
+                        ><span
+                            style="color: yellow; font-size: 2em; padding: 20px"
+                            >Yellow</span
+                        ></label
+                    ><br />
+                </div>
+                <div class="input-group">
+                    <input
+                        type="text"
+                        style="text-align: right"
+                        class="form-control"
+                        id="token"
+                        placeholder="Ragre n inyvq pnfuh rpnfu gbxra"
+                    />
+                    <div class="input-group-append">
+                        <button
+                            class="btn-info"
+                            type="submit"
+                            id="clickgo"
+                            value="Go"
+                        >
+                            LOGIN
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <br />
+            <div>
+                <p
+                    id="response"
+                    style="text-align: center; word-wrap: break-word"
+                ></p>
+            </div>
+            <br />
+            <div id="board"></div>
+            <code style="float:left">🐀13</code>
+            <code style="float:right">🥜</code>
+        </div>
+    </div>
+</html>

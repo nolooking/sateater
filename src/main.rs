@@ -3,11 +3,17 @@ extern crate rocket;
 
 pub mod cashu;
 pub mod wildcard;
+use std::sync::Mutex;
 
-use configparser::ini::Ini;
 // use clightningrpc::LightningRPC;
 use qrcode_generator::QrCodeEcc;
 use rocket::{fs::FileServer, http::Status, serde::json::Json};
+use sateater::{
+    cashu::cashu_receive,
+    load_conf,
+    vault::{board, land, BattleConfig},
+    BOARD_SIZE,
+};
 use serde::Serialize;
 
 // const RPC_FILE: &str = "lightning-rpc";
@@ -20,23 +26,6 @@ use serde::Serialize;
 // #[derive(Database)]
 // #[database("main")]
 // pub struct Main(sqlx::SqlitePool);
-
-fn load_conf() -> (String, String, String, String) {
-    let mut config = Ini::new();
-    let _map = config
-        .load("./config.cfg")
-        .expect("config.cfg does not exist! please copy config_example.cfg");
-
-    let address = config.get("lnd", "address").expect("address provided");
-    let cert = config.get("lnd", "certfile").expect("cert provided");
-    let macaroon = config
-        .get("lnd", "macaroonfile")
-        .expect("macaroon provided");
-    let label = config
-        .get("lnd", "defaultlabel")
-        .expect("default label provided");
-    (address, cert, macaroon, label)
-}
 
 #[derive(Serialize, Debug)]
 pub struct PaymentResponse {
@@ -147,10 +136,11 @@ pub async fn check_payment(payment_id: String) -> (Status, Json<PaymentStatusRes
 
 #[get("/receive_ecash?<token>")]
 pub async fn receive_ecash(token: String) -> (Status, Json<PaymentStatusResponse>) {
+    let amount_paid = cashu_receive(&token);
     let response = PaymentStatusResponse {
-        payment_complete: cashu::cashu_receive(&token),
+        payment_complete: amount_paid > 0,
         // For later doing onchain
-        confirmed_paid: 0,
+        confirmed_paid: amount_paid as u64,
         unconfirmed_paid: 0,
     };
     (Status::Accepted, Json(response))
@@ -159,7 +149,6 @@ pub async fn receive_ecash(token: String) -> (Status, Json<PaymentStatusResponse
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        // .attach(Main::init())
         .mount("/", FileServer::from("./html"))
         .mount(
             "/api",
@@ -168,6 +157,11 @@ fn rocket() -> _ {
                 check_payment,
                 receive_ecash,
                 wildcard::wildcard,
+                board,
+                land
             ],
         )
+        .manage(Mutex::new(BattleConfig {
+            board: vec![vec![(0, 0); BOARD_SIZE.into()]; BOARD_SIZE.into()],
+        }))
 }
