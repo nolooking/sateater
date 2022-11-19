@@ -11,41 +11,6 @@ use rocket::{
 use serde::{Deserialize, Serialize};
 use std::io::Write;
 
-// fn load_api_key() -> String {
-//     std::fs::read_to_string("VOLTAGE_API_SECRET")
-//         .expect("could not open voltage_api_secret")
-//         .trim()
-//         .to_string()
-// }
-
-// Send email with request (and refund address)
-// Store on machine also ( no db yet )
-// Reply with address
-
-// If paid, we will open a channel for you in next few hours
-
-// Fix capacity at 1m sats
-// Fix at 1 month duration (until we can get quotes from API).
-
-// let mut map = HashMap::new();
-// map.insert("product_id", "61909b26da0e257a68863f25");
-// map.insert("remote_balance", &capacity);
-// map.insert("local_balance", "0");
-// map.insert("channel_expiry", &duration);
-
-// let client = reqwest::Client::new();
-// let res = client
-//     .post(url)
-//     .header("X-VOLTAGE-AUTH", load_api_key().as_bytes())
-//     .json(&map)
-//     .send()
-//     .await
-//     .expect("contacted voltage");
-
-// let txt = res.text().await.expect("loads");
-// let json = serde_json::from_str(&txt).unwrap();
-// dbg!(&json);
-
 // Write to file just in case something goes wrong with email
 fn store_request(data: String) {
     let logfile = "inbound.log";
@@ -155,7 +120,7 @@ pub async fn load_inbound_requests() -> Vec<InboundRequest> {
         Ok(contents) => contents,
     };
 
-    let requests = contents
+    contents
         .lines()
         .filter_map(|line| {
             let request = serde_json::from_str(line.as_ref().expect("valid line"));
@@ -168,6 +133,5 @@ pub async fn load_inbound_requests() -> Vec<InboundRequest> {
                 }
             }
         })
-        .collect::<Vec<_>>();
-    requests
+        .collect::<Vec<_>>()
 }

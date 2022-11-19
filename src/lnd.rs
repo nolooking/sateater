@@ -1,32 +1,19 @@
-use configparser::ini::Ini;
-use tonic_lnd::lnrpc::AddInvoiceResponse;
+use sateater::load_conf;
+use tonic_lnd::{lnrpc::AddInvoiceResponse, LndLightningClient};
 
 use futures_util::StreamExt;
 
 use crate::inbound::{build_and_send_email, load_inbound_requests};
 
-pub fn load_conf() -> (String, String, String, String) {
-    let mut config = Ini::new();
-    let _map = config
-        .load("./config.cfg")
-        .expect("config.cfg does not exist! please copy config_example.cfg");
-
-    let address = config.get("lnd", "address").expect("address provided");
-    let cert = config.get("lnd", "certfile").expect("cert provided");
-    let macaroon = config
-        .get("lnd", "macaroonfile")
-        .expect("macaroon provided");
-    let label = config
-        .get("lnd", "defaultlabel")
-        .expect("default label provided");
-    (address, cert, macaroon, label)
+pub async fn get_lnd_client() -> LndLightningClient {
+    let (address, cert, macaroon, _) = load_conf();
+    tonic_lnd::connect_lightning(address, cert, macaroon)
+        .await
+        .expect("failed to connect")
 }
 
 pub async fn get_onchain_address() -> String {
-    let (address, cert, macaroon, _) = load_conf();
-    let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
-        .await
-        .expect("failed to connect");
+    let mut client = get_lnd_client().await;
 
     let newaddressreq = tonic_lnd::lnrpc::NewAddressRequest {
         r#type: 4, //taproot
@@ -38,28 +25,19 @@ pub async fn get_onchain_address() -> String {
         .await
         .unwrap()
         .into_inner();
-
-    address.address.to_string()
+    address.address
 }
 
 pub async fn get_info() -> tonic_lnd::lnrpc::GetInfoResponse {
-    let (address, cert, macaroon, _) = load_conf();
-    let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
-        .await
-        .expect("failed to connect");
+    let mut client = get_lnd_client().await;
 
-    let inforeq = tonic_lnd::lnrpc::GetInfoRequest {
-        ..Default::default()
-    };
+    let inforeq = tonic_lnd::lnrpc::GetInfoRequest {};
     let info = client.get_info(inforeq).await.unwrap().into_inner();
     info
 }
 
 pub async fn create_invoice(amount: i64, description: String) -> AddInvoiceResponse {
-    let (address, cert, macaroon, _) = load_conf();
-    let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
-        .await
-        .expect("failed to connect");
+    let mut client = get_lnd_client().await;
 
     // let sat_amount = amount.checked_mul(1000).expect("not billions(?) of sats") as i64;
 
@@ -80,10 +58,7 @@ pub async fn create_invoice(amount: i64, description: String) -> AddInvoiceRespo
 }
 
 pub async fn check_invoice(payment_id: String) -> bool {
-    let (address, cert, macaroon, _label) = load_conf();
-    let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
-        .await
-        .expect("failed to connect");
+    let mut client = get_lnd_client().await;
 
     let payment_hash = tonic_lnd::lnrpc::PaymentHash {
         r_hash: hex::decode(payment_id).expect("valid payment hash"),
@@ -96,16 +71,12 @@ pub async fn check_invoice(payment_id: String) -> bool {
         .expect("fetched invoices")
         .into_inner();
 
-    let payment_complete = if invoice.state == 1 { true } else { false };
-    payment_complete
+    invoice.state == 1
 }
 
 #[tokio::main]
 pub async fn monitor_onchain_received() {
-    let (address, cert, macaroon, _) = load_conf();
-    let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
-        .await
-        .expect("failed to connect");
+    let mut client = get_lnd_client().await;
 
     let tx_req = tonic_lnd::lnrpc::GetTransactionsRequest {
         end_height: get_info().await.block_height as i32,
@@ -133,8 +104,7 @@ pub async fn monitor_onchain_received() {
         for output in outputs {
             if let Some(request) = inbound_requests
                 .iter()
-                .filter(|req| req.payment_address == output.address)
-                .next()
+                .find(|req| req.payment_address == output.address)
             {
                 if request.price <= output.amount as u64 {
                     build_and_send_email(request).await;

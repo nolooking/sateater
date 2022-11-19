@@ -13,6 +13,7 @@ use qrcode_generator::QrCodeEcc;
 use rocket::{fs::FileServer, http::Status, serde::json::Json};
 use sateater::{
     cashu::cashu_receive,
+    load_conf,
     vault::{board, land, BattleConfig},
     BOARD_SIZE,
 };
@@ -31,7 +32,7 @@ pub async fn create_payment(
     amount: i64,
     message: Option<String>,
 ) -> (Status, Json<PaymentResponse>) {
-    let (_, _, _, label) = lnd::load_conf();
+    let (_, _, _, label) = load_conf();
     let description = match message {
         Some(message) => message,
         None => label,
@@ -49,7 +50,7 @@ pub async fn create_payment(
         Json(PaymentResponse {
             amount,
             address: created_invoice.payment_request,
-            payment_id: payment_id.to_string(),
+            payment_id,
             message: "payment created".to_string(),
         }),
     )
@@ -123,28 +124,3 @@ async fn main() -> Result<(), rocket::Error> {
 
     Ok(())
 }
-
-// #[launch]
-// fn rocket() -> _ {
-//     thread::spawn(|| loop {
-//         monitor_onchain_received().await;
-//     });
-
-//     rocket::build()
-//         .mount("/", FileServer::from("./html"))
-//         .mount(
-//             "/api",
-//             routes![
-//                 create_payment,
-//                 check_payment,
-//                 receive_ecash,
-//                 wildcard::wildcard,
-//                 board,
-//                 land,
-//                 inbound::request_inbound
-//             ],
-//         )
-//         .manage(Mutex::new(BattleConfig {
-//             board: vec![vec![(0, 0); BOARD_SIZE.into()]; BOARD_SIZE.into()],
-//         }))
-// }
