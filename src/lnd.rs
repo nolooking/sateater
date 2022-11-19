@@ -82,3 +82,30 @@ pub async fn check_invoice(payment_id: String) -> bool {
     let payment_complete = if invoice.state == 1 { true } else { false };
     payment_complete
 }
+
+pub async fn check_onchain_received(check_address: String) -> u64 {
+    let (address, cert, macaroon, _) = load_conf();
+    let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
+        .await
+        .expect("failed to connect");
+
+    let txn_req = tonic_lnd::lnrpc::GetTransactionsRequest {
+        ..Default::default()
+    };
+    let txs = client
+        .get_transactions(txn_req)
+        .await
+        .expect("fetched transactions")
+        .into_inner();
+
+    let total_rec = txs
+        .transactions
+        .iter()
+        .flat_map(|tx| tx.output_details.clone())
+        .filter(|output_details| output_details.address == check_address)
+        .fold(0, |acc, tx| {
+            tx.amount.checked_add(acc).expect("no overflow")
+        });
+
+    total_rec as u64
+}

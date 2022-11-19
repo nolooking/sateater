@@ -6,8 +6,9 @@ pub mod email;
 pub mod inbound;
 pub mod lnd;
 pub mod wildcard;
-use std::sync::Mutex;
+use std::{sync::Mutex, thread, time::Duration};
 
+use inbound::check_inbound_payments;
 use qrcode_generator::QrCodeEcc;
 use rocket::{fs::FileServer, http::Status, serde::json::Json};
 use sateater::{
@@ -95,6 +96,11 @@ pub async fn receive_ecash(token: String) -> (Status, Json<PaymentStatusResponse
 
 #[launch]
 fn rocket() -> _ {
+    // thread::spawn(|| loop {
+    //     thread::sleep(Duration::from_millis(4000));
+    //     check_inbound_payments();
+    // });
+
     rocket::build()
         .mount("/", FileServer::from("./html"))
         .mount(

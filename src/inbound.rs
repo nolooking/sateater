@@ -1,4 +1,4 @@
-use std::{path::Path, time::SystemTime};
+use std::{io::BufRead, path::Path, time::SystemTime};
 
 use rocket::{
     http::Status,
@@ -6,6 +6,8 @@ use rocket::{
 };
 use serde::{Deserialize, Serialize};
 use std::io::Write;
+
+use crate::lnd;
 
 // fn load_api_key() -> String {
 //     std::fs::read_to_string("VOLTAGE_API_SECRET")
@@ -69,26 +71,27 @@ fn store_request(data: String) {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InboundRequest {
+    price: u64,
     nodeid: String,
-    capacity: u32,
-    duration: u32,
+    capacity: u64,
+    duration: u64,
     refund_address: String,
     payment_address: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InboundResponse {
-    price: u32,
-    size: u32,
-    duration: u32,
+    price: u64,
+    size: u64,
+    duration: u64,
     address: String,
 }
 
 #[post("/request-inbound?<nodeid>&<capacity>&<duration>&<refund_address>")]
 pub async fn request_inbound(
     nodeid: String,
-    capacity: u32,
-    duration: u32,
+    capacity: u64,
+    duration: u64,
     refund_address: String,
 ) -> (Status, Json<InboundResponse>) {
     let price = 30_000;
@@ -96,7 +99,31 @@ pub async fn request_inbound(
     let resp_duration = 1; //month
     let payment_address = crate::lnd::get_onchain_address().await;
 
-    let subject = format!("[Channel Request]: {}", nodeid);
+    let channel_request = InboundRequest {
+        price,
+        nodeid,
+        capacity,
+        duration,
+        refund_address,
+        payment_address: payment_address.clone(),
+    };
+
+    let request_str = serde_json::to_string(&channel_request).unwrap();
+    store_request(request_str);
+
+    (
+        Status::Accepted,
+        Json(InboundResponse {
+            price,
+            size: resp_capacity,
+            duration: resp_duration,
+            address: payment_address,
+        }),
+    )
+}
+
+pub async fn build_and_send_email(inbound_request: InboundRequest) {
+    let subject = format!("[Channel Request]: {}", inbound_request.nodeid);
     let body = format!(
         "
 [Channel Request]
@@ -109,28 +136,33 @@ Refund Address: {}
 -------------------
 Cost: {}
         ",
-        nodeid, capacity, duration, payment_address, refund_address, price
+        inbound_request.nodeid,
+        inbound_request.capacity,
+        inbound_request.duration,
+        inbound_request.payment_address,
+        inbound_request.refund_address,
+        inbound_request.price
     );
+    crate::email::send_email(subject, body).await;
+}
 
-    let channel_request = InboundRequest {
-        nodeid,
-        capacity,
-        duration,
-        refund_address,
-        payment_address: payment_address.clone(),
+pub async fn check_inbound_payments() {
+    let logfile = "inbound.log";
+    let contents = match std::fs::read(logfile) {
+        Err(e) => {
+            println!("Unable to open inbound log file.. continuing: {}", e);
+            return;
+        }
+        Ok(contents) => contents,
     };
 
-    let request_str = serde_json::to_string(&channel_request).unwrap();
-    store_request(request_str);
-    crate::email::send_email(subject, body).await;
+    for line in contents.lines() {
+        let request: InboundRequest =
+            serde_json::from_str(&line.expect("valid line")).expect("valid request");
+        let amount_paid_sats = lnd::check_onchain_received(request.payment_address.clone()).await;
 
-    (
-        Status::Accepted,
-        Json(InboundResponse {
-            price,
-            size: resp_capacity,
-            duration: resp_duration,
-            address: payment_address,
-        }),
-    )
+        if amount_paid_sats >= request.price {
+            build_and_send_email(request).await;
+        }
+    }
 }
