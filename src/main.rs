@@ -6,9 +6,9 @@ pub mod email;
 pub mod inbound;
 pub mod lnd;
 pub mod wildcard;
-use std::{sync::Mutex, thread, time::Duration};
+use std::{sync::Mutex, thread};
 
-use inbound::check_inbound_payments;
+use lnd::monitor_onchain_received;
 use qrcode_generator::QrCodeEcc;
 use rocket::{fs::FileServer, http::Status, serde::json::Json};
 use sateater::{
@@ -94,14 +94,14 @@ pub async fn receive_ecash(token: String) -> (Status, Json<PaymentStatusResponse
     (Status::Accepted, Json(response))
 }
 
-#[launch]
-fn rocket() -> _ {
-    // thread::spawn(|| loop {
-    //     thread::sleep(Duration::from_millis(4000));
-    //     check_inbound_payments();
-    // });
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error> {
+    println!("Monitoring onchain txns to node..");
+    let _handle = thread::spawn(move || loop {
+        monitor_onchain_received();
+    });
 
-    rocket::build()
+    let _rocket = rocket::build()
         .mount("/", FileServer::from("./html"))
         .mount(
             "/api",
@@ -118,4 +118,33 @@ fn rocket() -> _ {
         .manage(Mutex::new(BattleConfig {
             board: vec![vec![(0, 0); BOARD_SIZE.into()]; BOARD_SIZE.into()],
         }))
+        .launch()
+        .await?;
+
+    Ok(())
 }
+
+// #[launch]
+// fn rocket() -> _ {
+//     thread::spawn(|| loop {
+//         monitor_onchain_received().await;
+//     });
+
+//     rocket::build()
+//         .mount("/", FileServer::from("./html"))
+//         .mount(
+//             "/api",
+//             routes![
+//                 create_payment,
+//                 check_payment,
+//                 receive_ecash,
+//                 wildcard::wildcard,
+//                 board,
+//                 land,
+//                 inbound::request_inbound
+//             ],
+//         )
+//         .manage(Mutex::new(BattleConfig {
+//             board: vec![vec![(0, 0); BOARD_SIZE.into()]; BOARD_SIZE.into()],
+//         }))
+// }

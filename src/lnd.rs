@@ -1,6 +1,10 @@
 use configparser::ini::Ini;
 use tonic_lnd::lnrpc::AddInvoiceResponse;
 
+use futures_util::StreamExt;
+
+use crate::inbound::{build_and_send_email, load_inbound_requests};
+
 pub fn load_conf() -> (String, String, String, String) {
     let mut config = Ini::new();
     let _map = config
@@ -83,29 +87,42 @@ pub async fn check_invoice(payment_id: String) -> bool {
     payment_complete
 }
 
-pub async fn check_onchain_received(check_address: String) -> u64 {
+#[tokio::main]
+pub async fn monitor_onchain_received() {
     let (address, cert, macaroon, _) = load_conf();
     let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
         .await
         .expect("failed to connect");
 
-    let txn_req = tonic_lnd::lnrpc::GetTransactionsRequest {
+    let tx_req = tonic_lnd::lnrpc::GetTransactionsRequest {
         ..Default::default()
     };
-    let txs = client
-        .get_transactions(txn_req)
+
+    let mut stream = client
+        .subscribe_transactions(tx_req)
         .await
-        .expect("fetched transactions")
+        .expect("fetched stream")
         .into_inner();
+    println!("aaaaa we got some txns");
 
-    let total_rec = txs
-        .transactions
-        .iter()
-        .flat_map(|tx| tx.output_details.clone())
-        .filter(|output_details| output_details.address == check_address)
-        .fold(0, |acc, tx| {
-            tx.amount.checked_add(acc).expect("no overflow")
-        });
-
-    total_rec as u64
+    let requests = load_inbound_requests().await;
+    while let Some(tx) = stream.next().await {
+        let outputs = tx.expect("some tx").output_details;
+        for output in outputs {
+            if let Some(request) = requests
+                .iter()
+                .filter(|req| req.payment_address == output.address)
+                .next()
+            {
+                if request.price <= output.amount as u64 {
+                    // PAID!!!
+                    build_and_send_email(request).await;
+                    dbg!(output);
+                    println!("We received a payment! Sent email!")
+                } else {
+                    println!("Looks like someone underpaid {:?}", request);
+                }
+            }
+        }
+    }
 }

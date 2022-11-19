@@ -1,4 +1,8 @@
-use std::{io::BufRead, path::Path, time::SystemTime};
+use std::{
+    io::BufRead,
+    path::Path,
+    time::{SystemTime, UNIX_EPOCH},
+};
 
 use rocket::{
     http::Status,
@@ -6,8 +10,6 @@ use rocket::{
 };
 use serde::{Deserialize, Serialize};
 use std::io::Write;
-
-use crate::lnd;
 
 // fn load_api_key() -> String {
 //     std::fs::read_to_string("VOLTAGE_API_SECRET")
@@ -56,27 +58,20 @@ fn store_request(data: String) {
         .open(logfile)
         .unwrap();
 
-    if let Err(e) = writeln!(
-        file,
-        "{:?}: {}",
-        SystemTime::now()
-            .duration_since(SystemTime::UNIX_EPOCH)
-            .unwrap()
-            .as_millis(),
-        data,
-    ) {
+    if let Err(e) = writeln!(file, "{}", data,) {
         panic!("Couldn't write to file: {}", e);
     }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InboundRequest {
-    price: u64,
-    nodeid: String,
-    capacity: u64,
-    duration: u64,
-    refund_address: String,
-    payment_address: String,
+    pub unix_time: u128,
+    pub price: u64,
+    pub nodeid: String,
+    pub capacity: u64,
+    pub duration: u64,
+    pub refund_address: String,
+    pub payment_address: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -99,7 +94,11 @@ pub async fn request_inbound(
     let resp_duration = 1; //month
     let payment_address = crate::lnd::get_onchain_address().await;
 
+    let start = SystemTime::now();
+    let unix_time = start.duration_since(UNIX_EPOCH).unwrap().as_millis();
+
     let channel_request = InboundRequest {
+        unix_time,
         price,
         nodeid,
         capacity,
@@ -122,7 +121,7 @@ pub async fn request_inbound(
     )
 }
 
-pub async fn build_and_send_email(inbound_request: InboundRequest) {
+pub async fn build_and_send_email(inbound_request: &InboundRequest) {
     let subject = format!("[Channel Request]: {}", inbound_request.nodeid);
     let body = format!(
         "
@@ -146,23 +145,29 @@ Cost: {}
     crate::email::send_email(subject, body).await;
 }
 
-pub async fn check_inbound_payments() {
+pub async fn load_inbound_requests() -> Vec<InboundRequest> {
     let logfile = "inbound.log";
     let contents = match std::fs::read(logfile) {
         Err(e) => {
-            println!("Unable to open inbound log file.. continuing: {}", e);
-            return;
+            eprintln!("Unable to open inbound.log file: {:?}", e);
+            return vec![];
         }
         Ok(contents) => contents,
     };
 
-    for line in contents.lines() {
-        let request: InboundRequest =
-            serde_json::from_str(&line.expect("valid line")).expect("valid request");
-        let amount_paid_sats = lnd::check_onchain_received(request.payment_address.clone()).await;
-
-        if amount_paid_sats >= request.price {
-            build_and_send_email(request).await;
-        }
-    }
+    let requests = contents
+        .lines()
+        .filter_map(|line| {
+            let request = serde_json::from_str(line.as_ref().expect("valid line"));
+            match request {
+                Ok(r) => Some(r),
+                Err(e) => {
+                    eprintln!("Failed to read request from line: {:?}", &line);
+                    eprintln!("{:?}", e);
+                    None
+                }
+            }
+        })
+        .collect::<Vec<_>>();
+    requests
 }
