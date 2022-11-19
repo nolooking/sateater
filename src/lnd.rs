@@ -42,6 +42,19 @@ pub async fn get_onchain_address() -> String {
     address.address.to_string()
 }
 
+pub async fn get_info() -> tonic_lnd::lnrpc::GetInfoResponse {
+    let (address, cert, macaroon, _) = load_conf();
+    let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
+        .await
+        .expect("failed to connect");
+
+    let inforeq = tonic_lnd::lnrpc::GetInfoRequest {
+        ..Default::default()
+    };
+    let info = client.get_info(inforeq).await.unwrap().into_inner();
+    info
+}
+
 pub async fn create_invoice(amount: i64, description: String) -> AddInvoiceResponse {
     let (address, cert, macaroon, _) = load_conf();
     let mut client = tonic_lnd::connect_lightning(address, cert, macaroon)
@@ -95,6 +108,7 @@ pub async fn monitor_onchain_received() {
         .expect("failed to connect");
 
     let tx_req = tonic_lnd::lnrpc::GetTransactionsRequest {
+        end_height: get_info().await.block_height as i32,
         ..Default::default()
     };
 
@@ -103,22 +117,29 @@ pub async fn monitor_onchain_received() {
         .await
         .expect("fetched stream")
         .into_inner();
-    println!("aaaaa we got some txns");
 
-    let requests = load_inbound_requests().await;
+    let mut seen_txs = vec![];
     while let Some(tx) = stream.next().await {
-        let outputs = tx.expect("some tx").output_details;
+        let inbound_requests = load_inbound_requests().await;
+        let tx = tx.expect("valid tx");
+
+        // Hack to avoid duplicates( where are they coming from? )
+        if seen_txs.contains(&tx.tx_hash) {
+            continue;
+        }
+        seen_txs.push(tx.tx_hash);
+
+        let outputs = tx.output_details;
         for output in outputs {
-            if let Some(request) = requests
+            if let Some(request) = inbound_requests
                 .iter()
                 .filter(|req| req.payment_address == output.address)
                 .next()
             {
                 if request.price <= output.amount as u64 {
-                    // PAID!!!
                     build_and_send_email(request).await;
-                    dbg!(output);
-                    println!("We received a payment! Sent email!")
+                    println!("We received a payment! Sent email!");
+                    println!("{:?}\n", request);
                 } else {
                     println!("Looks like someone underpaid {:?}", request);
                 }
