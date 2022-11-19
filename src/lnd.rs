@@ -32,11 +32,7 @@ pub async fn get_onchain_address() -> String {
     let address = client
         .new_address(newaddressreq)
         .await
-        .expect(
-            "created invoice with lightning node using ssh tunnel!\n
-                 Run `ssh pi@your.node.ip -q -N -L 10009:localhost:10009`\n\n",
-            // Run `ssh -nNT -L ./lightning-rpc:/root/.lightning/bitcoin/lightning-rpc user@host`\n\n"
-        )
+        .unwrap()
         .into_inner();
 
     address.address.to_string()
@@ -60,11 +56,7 @@ pub async fn create_invoice(amount: i64, description: String) -> AddInvoiceRespo
         .add_invoice(invoice)
         .await
         // , &payment_id.to_string(), &description, None)
-        .expect(
-            "created invoice with lightning node using ssh tunnel!\n
-             Run `ssh pi@your.node.ip -q -N -L 10009:localhost:10009`\n\n",
-            // Run `ssh -nNT -L ./lightning-rpc:/root/.lightning/bitcoin/lightning-rpc user@host`\n\n"
-        )
+        .unwrap()
         .into_inner();
 
     created_invoice
