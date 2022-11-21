@@ -86,10 +86,10 @@ pub async fn request_inbound(
 }
 
 pub async fn build_and_send_email(inbound_request: &InboundRequest) {
-    let subject = format!("[Channel Request]: {}", inbound_request.nodeid);
+    let subject = format!("[Urgent] Inbound Request for: {}", inbound_request.nodeid);
     let body = format!(
         "
-[Channel Request]
+[Inbound Channel Request]
 -------------------
 NodeID: {}
 Capacity: {}
