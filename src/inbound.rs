@@ -11,7 +11,6 @@ use rocket::{
 use serde::{Deserialize, Serialize};
 use std::io::Write;
 
-// Write to file just in case something goes wrong with email
 fn store_request(data: String) {
     let logfile = "inbound.log";
     if !Path::new(logfile).exists() {
@@ -21,7 +20,7 @@ fn store_request(data: String) {
         .write(true)
         .append(true)
         .open(logfile)
-        .unwrap();
+        .expect("tried to open inbound.log file");
 
     if let Err(e) = writeln!(file, "{}", data,) {
         panic!("Couldn't write to file: {}", e);
@@ -123,11 +122,18 @@ pub async fn load_inbound_requests() -> Vec<InboundRequest> {
     contents
         .lines()
         .filter_map(|line| {
-            let request = serde_json::from_str(line.as_ref().expect("valid line"));
-            match request {
+            let line_str = match line {
+                Ok(line) => line,
+                Err(e) => {
+                    eprintln!("Could not read line: {}", e);
+                    return None;
+                }
+            };
+
+            match serde_json::from_str(&line_str) {
                 Ok(r) => Some(r),
                 Err(e) => {
-                    eprintln!("Failed to read request from line: {:?}", &line);
+                    eprintln!("Failed to read request from line: {:?}", &line_str);
                     eprintln!("{:?}", e);
                     None
                 }
