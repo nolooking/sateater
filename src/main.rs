@@ -2,14 +2,18 @@
 extern crate rocket;
 
 pub mod cashu;
+pub mod email;
+pub mod inbound;
 pub mod lnd;
 pub mod wildcard;
-use std::sync::Mutex;
+use std::{sync::Mutex, thread};
 
+use lnd::monitor_onchain_received;
 use qrcode_generator::QrCodeEcc;
 use rocket::{fs::FileServer, http::Status, serde::json::Json};
 use sateater::{
     cashu::cashu_receive,
+    load_conf,
     vault::{board, land, BattleConfig},
     BOARD_SIZE,
 };
@@ -28,7 +32,7 @@ pub async fn create_payment(
     amount: i64,
     message: Option<String>,
 ) -> (Status, Json<PaymentResponse>) {
-    let (_, _, _, label) = lnd::load_conf();
+    let (_, _, _, label) = load_conf();
     let description = match message {
         Some(message) => message,
         None => label,
@@ -46,7 +50,7 @@ pub async fn create_payment(
         Json(PaymentResponse {
             amount,
             address: created_invoice.payment_request,
-            payment_id: payment_id.to_string(),
+            payment_id,
             message: "payment created".to_string(),
         }),
     )
@@ -85,16 +89,20 @@ pub async fn receive_ecash(token: String) -> (Status, Json<PaymentStatusResponse
     let amount_paid = cashu_receive(&token);
     let response = PaymentStatusResponse {
         payment_complete: amount_paid > 0,
-        // For later doing onchain
         confirmed_paid: amount_paid as u64,
         unconfirmed_paid: 0,
     };
     (Status::Accepted, Json(response))
 }
 
-#[launch]
-fn rocket() -> _ {
-    rocket::build()
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error> {
+    println!("Monitoring onchain txns to node..");
+    let _handle = thread::spawn(move || loop {
+        monitor_onchain_received();
+    });
+
+    let _rocket = rocket::build()
         .mount("/", FileServer::from("./html"))
         .mount(
             "/api",
@@ -104,10 +112,15 @@ fn rocket() -> _ {
                 receive_ecash,
                 wildcard::wildcard,
                 board,
-                land
+                land,
+                inbound::request_inbound
             ],
         )
         .manage(Mutex::new(BattleConfig {
             board: vec![vec![(0, 0); BOARD_SIZE.into()]; BOARD_SIZE.into()],
         }))
+        .launch()
+        .await?;
+
+    Ok(())
 }
